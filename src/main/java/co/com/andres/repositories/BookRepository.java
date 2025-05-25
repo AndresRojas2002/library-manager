@@ -12,5 +12,9 @@ public interface BookRepository extends JpaRepository<Books,Long> {
    // Busca libros donde el texto coincida parcial o totalmente con el autor o el título (ignorando mayúsculas/minúsculas)
    List<Books> findByAuthorContainingIgnoreCaseOrTitleContainingIgnoreCase(String text, String text2);
     
-   List<Books> findByStatus(State state);
+   // Busca libros por estado
+   List<Books> findByState(State state);
+
+   // Busca libros por género(ignorando mayúsculas/minúsculas)
+   List<Books> findByGenderIgnoreCaseContaining(String gender);
 }

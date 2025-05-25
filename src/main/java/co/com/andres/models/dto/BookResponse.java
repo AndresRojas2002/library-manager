@@ -4,6 +4,7 @@ package co.com.andres.models.dto;
 
 import lombok.Data;
 
+//respuesta de libro
 @Data
 public class BookResponse {
 
@@ -19,5 +20,5 @@ public class BookResponse {
 
     private String gender;
 
-    private String State;
+    private String state;
 }

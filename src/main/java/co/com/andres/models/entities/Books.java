@@ -36,8 +36,8 @@ public class Books {
     @Column()
     private String gender;
 
-    @Enumerated(EnumType.STRING) // Guarda el estado como texto en la base de datos
-    @Column(nullable = false)
-    private State state = State.AVAILABLE; // Valor por defecto: Disponibl
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'AVAILABLE'")
+    private State state = State.AVAILABLE;
 
 }
