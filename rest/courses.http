@@ -1,0 +1,50 @@
+### Crear uno o varios libros
+POST http://localhost:8080/api/libros
+Content-Type: application/json
+
+{
+    "title": "La casa de los espíritus",
+    "author": "Isabel Allende",
+    "isbn": "978-84-322-3101-5",
+    "yearOfPublication": "2026-01-01",
+    "gender": "Realismo mágico"
+}
+  
+### Obtener todos los libros
+GET http://localhost:8080/api/libros
+
+### Obtener libro por ID
+GET http://localhost:8080/api/libros/1
+
+### Actualizar libro por ID
+PUT http://localhost:8080/api/libros/1
+Content-Type: application/json
+
+{
+  "title": "Cien anos de soledad ",
+  "author": "Gabriel Garcia Marquez",
+  "isbn": "978-84-376-0494-7",
+  "yearOfPublication": "1967-05-30",
+  "gender": "Novela"
+}
+
+### Eliminar libro por ID
+DELETE http://localhost:8080/api/libros/10
+
+### Buscar por autor o titulo
+GET http://localhost:8080/api/libros/textoBusqueda?q=Garcia
+
+### Buscar por genero
+GET http://localhost:8080/api/libros/genero?g=ficcion
+
+### Listar libros disponibles
+GET http://localhost:8080/api/libros/disponibles
+
+### Listar libros prestados
+GET http://localhost:8080/api/libros/prestados
+
+### Prestar un libro
+PATCH http://localhost:8080/api/libros/8/prestar
+
+### Devolver un libro
+PATCH http://localhost:8080/api/libros/2/devolver

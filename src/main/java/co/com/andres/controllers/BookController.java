@@ -16,8 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import co.com.andres.models.dto.BookRequest;
 import co.com.andres.models.dto.BookResponse;
 import co.com.andres.services.BookServices;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Libros", description = "API para gestionar los libros de la biblioteca")
 @RestController
 @RequestMapping("/api/libros")
 @RequiredArgsConstructor
@@ -25,74 +35,117 @@ public class BookController {
 
     private final BookServices bookServices;
 
-    // crea varios libros
-
+    @Operation(summary = "Crear un nuevo libro", description = "Crea un nuevo libro en la biblioteca")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Libro creado exitosamente",
+            content = @Content(schema = @Schema(implementation = BookResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Datos del libro inválidos")
+    })
     @PostMapping
-    public List<BookResponse> createBooks(@RequestBody List<BookRequest> bookRequests) {
-        return bookRequests.stream()
-                .map(bookServices::createBook)
-                .toList();
+    public BookResponse createBooks(@Valid @RequestBody BookRequest bookRequests) {
+        return bookServices.createBook(bookRequests);
     }
 
-    // odtiene todos los libros
+    @Operation(summary = "Obtener todos los libros", description = "Retorna una lista de todos los libros disponibles en la biblioteca")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de libros obtenida exitosamente",
+            content = @Content(schema = @Schema(implementation = BookResponse.class)))
+    })
     @GetMapping
     public List<BookResponse> getAllBooks() {
         return bookServices.getAll();
     }
 
-    // odtine por id
+    @Operation(summary = "Obtener libro por ID", description = "Retorna un libro específico basado en su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Libro encontrado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Libro no encontrado")
+    })
     @GetMapping("{id}")
-    public BookResponse getById(@PathVariable("id") Long id) {
+    public BookResponse getById(@Parameter(description = "ID del libro") @PathVariable("id") Long id) {
         return bookServices.getById(id);
-
     }
 
-    // actualiza por id
+    @Operation(summary = "Actualizar libro", description = "Actualiza la información de un libro existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Libro actualizado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Libro no encontrado"),
+        @ApiResponse(responseCode = "400", description = "Datos del libro inválidos")
+    })
     @PutMapping("{id}")
-    public BookResponse updateBook(@PathVariable("id") long id, @RequestBody BookRequest bookRequest) {
+    public BookResponse updateBook(
+        @Parameter(description = "ID del libro a actualizar") @Valid @Min(0) @PathVariable("id") long id,
+        @Valid @RequestBody BookRequest bookRequest) {
         return bookServices.updateById(id, bookRequest);
     }
 
-    // elimina por id
+    @Operation(summary = "Eliminar libro", description = "Elimina un libro de la biblioteca")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Libro eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Libro no encontrado")
+    })
     @DeleteMapping("{id}")
-    public BookResponse deleteBook(@PathVariable("id") long id) {
+    public BookResponse deleteBook(@Parameter(description = "ID del libro a eliminar") @PathVariable("id") long id) {
         return bookServices.deleteById(id);
     }
 
-    // buscar por autor o titulo
+    @Operation(summary = "Buscar libros por autor o título", description = "Busca libros que coincidan con el texto proporcionado en el autor o título")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
+    })
     @GetMapping("/textoBusqueda")
-    public List<BookResponse> getByAuthorOrTitle(@RequestParam("q") String text) {
+    public List<BookResponse> getByAuthorOrTitle(
+        @Parameter(description = "Texto de búsqueda") @RequestParam("q") String text) {
         return bookServices.getByAuthorOrTitle(text);
     }
 
-    // lista de libros disponibles
+    @Operation(summary = "Obtener libros disponibles", description = "Retorna una lista de todos los libros que están disponibles para préstamo")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de libros disponibles obtenida exitosamente")
+    })
     @GetMapping("/disponibles")
     public List<BookResponse> getAvailableBook() {
         return bookServices.getAvailableBooks();
     }
 
-    // lista de libros prestados
+    @Operation(summary = "Obtener libros prestados", description = "Retorna una lista de todos los libros que están actualmente prestados")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de libros prestados obtenida exitosamente")
+    })
     @GetMapping("/prestados")
     public List<BookResponse> getLoanedBooks() {
         return bookServices.getLoanedBooks();
     }
 
-    // presta un libro
+    @Operation(summary = "Prestar libro", description = "Marca un libro como prestado")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Libro prestado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Libro no encontrado"),
+        @ApiResponse(responseCode = "400", description = "El libro no está disponible para préstamo")
+    })
     @PatchMapping("/{id}/prestar")
-    public BookResponse loanBook(@PathVariable("id") long id) {
+    public BookResponse loanBook(@Parameter(description = "ID del libro a prestar") @PathVariable("id") long id) {
         return bookServices.loanBook(id);
     }
 
-    // devuelve libro
+    @Operation(summary = "Devolver libro", description = "Marca un libro como devuelto")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Libro devuelto exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Libro no encontrado"),
+        @ApiResponse(responseCode = "400", description = "El libro no está prestado")
+    })
     @PatchMapping("/{id}/devolver")
-    public BookResponse returnBook(@PathVariable("id") long id) {
+    public BookResponse returnBook(@Parameter(description = "ID del libro a devolver") @PathVariable("id") long id) {
         return bookServices.returnBook(id);
     }
 
-    // listar por genero
+    @Operation(summary = "Buscar libros por género", description = "Retorna una lista de libros filtrados por género")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de libros por género obtenida exitosamente")
+    })
     @GetMapping("/genero")
-    public List<BookResponse> getGenderByBook(@RequestParam("g") String gender) {
+    public List<BookResponse> getGenderByBook(
+        @Parameter(description = "Género de los libros a buscar") @RequestParam("g") String gender) {
         return bookServices.getGenderByBook(gender);
     }
-
 }
