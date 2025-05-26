@@ -33,7 +33,7 @@ public class Books {
     @Column(nullable = false)
     private LocalDate yearOfPublication;
 
-    @Column()
+    @Column(nullable = false)
     private String gender;
 
     @Enumerated(EnumType.STRING)
