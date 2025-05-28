@@ -1,0 +1,37 @@
+@startuml
+
+entity "Users" {
+    * idUser : String <<PK>>
+    --
+    * name : String
+    lastName : String
+    * gmail : String
+    phone : String
+    * address : String
+    * dateRegistration : LocalDate
+}
+
+entity "Book" {
+    * idBook : String <<PK>>
+    --
+    * title : String
+    * author : String
+    * isbn : String
+    * publicationYear : Integer
+    * available : Boolean
+}
+
+entity "Loan" {
+    * idLoan : String <<PK>>
+    --
+    * idBook : String <<FK>>
+    * idUser : String <<FK>>
+    * loanDate : LocalDate
+    * returnDate : LocalDate
+    * status : String
+}
+
+Users "1" -- "N" Loan : "realiza"
+Book "1" -- "N" Loan : "es prestado en"
+
+@enduml 

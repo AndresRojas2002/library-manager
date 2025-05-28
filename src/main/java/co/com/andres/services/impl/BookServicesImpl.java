@@ -10,7 +10,7 @@ import co.com.andres.exceptions.BooksNotFoundException;
 import co.com.andres.models.dto.BookRequest;
 import co.com.andres.models.dto.BookResponse;
 import co.com.andres.models.entities.Books;
-import co.com.andres.models.entities.State;
+import co.com.andres.models.entities.StateBook;
 import co.com.andres.repositories.BookRepository;
 import co.com.andres.services.BookServices;
 import lombok.RequiredArgsConstructor;
@@ -92,17 +92,17 @@ public class BookServicesImpl implements BookServices {
     // odtine libros disponibles
     @Override
     public List<BookResponse> getAvailableBooks() {
-        return bookRepository.findByState(State.AVAILABLE).stream()
-            .map(this::toResponse)
-            .toList();
+        return bookRepository.findByState(StateBook.AVAILABLE).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // odtine libros prestados
     @Override
     public List<BookResponse> getLoanedBooks() {
-        return bookRepository.findByState(State.LOANED).stream()
-            .map(this::toResponse)
-            .toList();
+        return bookRepository.findByState(StateBook.LOANED).stream()
+                .map(this::toResponse)
+                .toList();
     }
 
     // presta un libro
@@ -114,14 +114,14 @@ public class BookServicesImpl implements BookServices {
         }
         Books book = bookOptional.get();
 
-        if (book.getState() == State.AVAILABLE){
-            book.setState (State.LOANED);
+        if (book.getState() == StateBook.AVAILABLE) {
+            book.setState(StateBook.LOANED);
             bookRepository.save(book);
             return toResponse(book);
-        }else {throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA PRESTADO  ");}
+        } else {
+            throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA PRESTADO  ");
+        }
 
-
-       
     }
 
     // devuelve un libro
@@ -133,22 +133,23 @@ public class BookServicesImpl implements BookServices {
         }
         Books book = bookOptional.get();
 
-        if (book.getState() == State.LOANED){
-            book.setState (State.AVAILABLE);
+        if (book.getState() == StateBook.LOANED) {
+            book.setState(StateBook.AVAILABLE);
             bookRepository.save(book);
             return toResponse(book);
-        }else {throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA DISPONIBLE");}
+        } else {
+            throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA DISPONIBLE");
+        }
     }
 
     // listar por genero
     @Override
     public List<BookResponse> getGenderByBook(String gender) {
         return bookRepository.findByGenderIgnoreCaseContaining(gender).stream()
-            .map(this::toResponse)
-            .toList();
+                .map(this::toResponse)
+                .toList();
     }
-    
-    
+
     // convierte un libro a una respuesta
     private BookResponse toResponse(Books books) {
         var response = new BookResponse();
@@ -170,7 +171,7 @@ public class BookServicesImpl implements BookServices {
         entity.setIsbn(bookRequest.getIsbn());
         entity.setYearOfPublication(LocalDate.parse(bookRequest.getYearOfPublication(), formatter));
         entity.setGender(bookRequest.getGender());
-        entity.setState(State.AVAILABLE);
+        entity.setState(StateBook.AVAILABLE);
         return entity;
     }
 }
