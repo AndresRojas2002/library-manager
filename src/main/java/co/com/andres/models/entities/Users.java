@@ -12,35 +12,39 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "books")
-public class Books {
-
+@Entity
+@Table(name = "users")
+public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long bookId;
+    @Column(name = "id_user", unique = true)
+    private Long idUser;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
+
+    @Column (nullable = false)
+    private String lastName;
 
     @Column(nullable = false)
-    private String author;
+    private String email;
 
-    @Column(nullable = false, unique = true)
-    private String isbn;
-
-    @Column(nullable = false)
-    private LocalDate yearOfPublication;
+    @Column
+    private String phone;
 
     @Column(nullable = false)
-    private String gender;
+    private String address;
 
+    @Column(nullable = false)
+    private LocalDate dateRegistration;
+
+   
     // Esta anotación @Enumerated indica que el campo state será almacenado como una cadena de texto en la base de datos   
     @Enumerated(EnumType.STRING)
     // La anotación columnDefinition define la estructura completa de la columna en la base de datos
-    // En este caso, especifica que será un varchar(10) con valor por defecto 'AVAILABLE'
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'AVAILABLE'")
-    private StateBook state = StateBook.AVAILABLE;
+    // En este caso, especifica que será un varchar(15) con valor por defecto 'WITHOUT_LOAN'
+    @Column(nullable = false, columnDefinition = "varchar(15) DEFAULT 'WITHOUT_LOAN'")
+    private StateUser stateUser = StateUser.WITHOUT_LOAN;
 
 }

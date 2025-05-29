@@ -25,17 +25,17 @@ public interface BookServices {
     List<BookResponse> getByAuthorOrTitle(String text);
 
     // Devuelve todos los libros que están disponibles
-    public List<BookResponse> getAvailableBooks();
+    List<BookResponse> getAvailableBooks();
 
     // Devuelve todos los libros que están prestados
-    public List<BookResponse> getLoanedBooks();
+    List<BookResponse> getLoanedBooks();
 
     // Prestar un libro
-    public BookResponse loanBook(Long Id);
+    BookResponse loanBook(Long Id);
 
     // Devolver libro
-    public BookResponse returnBook(Long Id);
+    BookResponse returnBook(Long Id);
 
     // listar por genero 
-    public List<BookResponse> getGenderByBook(String gender);
+    List<BookResponse> getGenderByBook(String gender);
 }

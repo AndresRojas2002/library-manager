@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import co.com.andres.models.entities.Books;
-import co.com.andres.models.entities.State;
+import co.com.andres.models.entities.StateBook;
 
 public interface BookRepository extends JpaRepository<Books,Long> { 
 
@@ -13,7 +13,7 @@ public interface BookRepository extends JpaRepository<Books,Long> {
    List<Books> findByAuthorContainingIgnoreCaseOrTitleContainingIgnoreCase(String text, String text2);
     
    // Busca libros por estado
-   List<Books> findByState(State state);
+   List<Books> findByState(StateBook state);
 
    // Busca libros por género(ignorando mayúsculas/minúsculas)
    List<Books> findByGenderIgnoreCaseContaining(String gender);

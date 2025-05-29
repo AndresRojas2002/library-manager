@@ -1,6 +1,6 @@
 package co.com.andres.models.entities;
 //estado de libro
-public enum State {
+public enum StateBook {
     AVAILABLE,
     LOANED
 }
