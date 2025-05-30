@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -115,28 +114,6 @@ public class BookController {
     @GetMapping("/prestados")
     public List<BookResponse> getLoanedBooks() {
         return bookServices.getLoanedBooks();
-    }
-
-    @Operation(summary = "Prestar libro", description = "Marca un libro como prestado")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Libro prestado exitosamente"),
-        @ApiResponse(responseCode = "404", description = "Libro no encontrado"),
-        @ApiResponse(responseCode = "400", description = "El libro no está disponible para préstamo")
-    })
-    @PatchMapping("/{id}/prestar")
-    public BookResponse loanBook(@Parameter(description = "ID del libro a prestar") @PathVariable("id") long id) {
-        return bookServices.loanBook(id);
-    }
-
-    @Operation(summary = "Devolver libro", description = "Marca un libro como devuelto")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Libro devuelto exitosamente"),
-        @ApiResponse(responseCode = "404", description = "Libro no encontrado"),
-        @ApiResponse(responseCode = "400", description = "El libro no está prestado")
-    })
-    @PatchMapping("/{id}/devolver")
-    public BookResponse returnBook(@Parameter(description = "ID del libro a devolver") @PathVariable("id") long id) {
-        return bookServices.returnBook(id);
     }
 
     @Operation(summary = "Buscar libros por género", description = "Retorna una lista de libros filtrados por género")

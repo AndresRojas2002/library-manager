@@ -105,42 +105,7 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    // presta un libro
-    @Override
-    public BookResponse loanBook(Long id) {
-        var bookOptional = bookRepository.findById(id);
-        if (!bookOptional.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
-        }
-        Books book = bookOptional.get();
-
-        if (book.getState() == StateBook.AVAILABLE) {
-            book.setState(StateBook.LOANED);
-            bookRepository.save(book);
-            return toResponse(book);
-        } else {
-            throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA PRESTADO  ");
-        }
-
-    }
-
-    // devuelve un libro
-    @Override
-    public BookResponse returnBook(Long id) {
-        var bookOptional = bookRepository.findById(id);
-        if (!bookOptional.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
-        }
-        Books book = bookOptional.get();
-
-        if (book.getState() == StateBook.LOANED) {
-            book.setState(StateBook.AVAILABLE);
-            bookRepository.save(book);
-            return toResponse(book);
-        } else {
-            throw new BooksNotFoundException("EL LIBRO YA SE ENCUENTRA DISPONIBLE");
-        }
-    }
+    
 
     // listar por genero
     @Override

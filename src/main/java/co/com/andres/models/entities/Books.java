@@ -40,7 +40,7 @@ public class Books {
     @Enumerated(EnumType.STRING)
     // La anotación columnDefinition define la estructura completa de la columna en la base de datos
     // En este caso, especifica que será un varchar(10) con valor por defecto 'AVAILABLE'
-    @Column(nullable = false, columnDefinition = "varchar(10) default 'AVAILABLE'")
+    @Column(nullable = false)
     private StateBook state = StateBook.AVAILABLE;
 
 }
