@@ -1,37 +1,57 @@
 @startuml
 
+enum StateBook {
+    AVAILABLE
+    LOANED
+}
+
+enum StateUser {
+    WITHOUT_LOAN
+    WITH_LOAN
+}
+
+enum StateLoan {
+    ACTIVE
+    NOT_ACTIVE
+}
+
 entity "Users" {
-    * idUser : String <<PK>>
+    * idUser : Long <<PK>>
     --
     * name : String
-    lastName : String
-    * gmail : String
+    * lastName : String
+    * email : String
     phone : String
     * address : String
     * dateRegistration : LocalDate
+    * stateUser : StateUser
 }
 
-entity "Book" {
-    * idBook : String <<PK>>
+entity "Books" {
+    * bookId : Long <<PK>>
     --
     * title : String
     * author : String
-    * isbn : String
-    * publicationYear : Integer
-    * available : Boolean
+    * isbn : String <<unique>>
+    * yearOfPublication : LocalDate
+    * gender : String
+    * state : StateBook
 }
 
-entity "Loan" {
-    * idLoan : String <<PK>>
+entity "Loans" {
+    * idLoan : Long <<PK>>
     --
-    * idBook : String <<FK>>
-    * idUser : String <<FK>>
+    * idBook : Books <<FK>>
+    * idUser : Users <<FK>>
     * loanDate : LocalDate
-    * returnDate : LocalDate
-    * status : String
+    * stateLoan : StateLoan
 }
 
-Users "1" -- "N" Loan : "realiza"
-Book "1" -- "N" Loan : "es prestado en"
+Users "1" -- "N" Loans : "realiza"
+Books "1" -- "N" Loans : "es prestado en"
+
+StateBook -- Books : "define estado"
+StateUser -- Users : "define estado"
+StateLoan -- Loans : "define estado"
 
 @enduml 

@@ -26,6 +26,11 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador REST para la gestión de libros de la biblioteca.
+ * Proporciona endpoints para crear, leer, actualizar y eliminar libros,
+ * así como para realizar búsquedas por diferentes criterios y gestionar su estado.
+ */
 @Tag(name = "Libros", description = "API para gestionar los libros de la biblioteca")
 @RestController
 @RequestMapping("/api/libros")
@@ -34,6 +39,13 @@ public class BookController {
 
     private final BookServices bookServices;
 
+    /**
+     * Crea un nuevo libro en la biblioteca.
+     * @param bookRequests Objeto con los datos del libro a crear
+     * @return BookResponse con los datos del libro creado
+     * @throws 201 si el libro se crea exitosamente
+     * @throws 400 si los datos son inválidos
+     */
     @Operation(summary = "Crear un nuevo libro", description = "Crea un nuevo libro en la biblioteca")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Libro creado exitosamente",
@@ -45,6 +57,11 @@ public class BookController {
         return bookServices.createBook(bookRequests);
     }
 
+    /**
+     * Obtiene todos los libros registrados en la biblioteca.
+     * @return Lista de BookResponse con todos los libros
+     * @throws 200 si la operación es exitosa
+     */
     @Operation(summary = "Obtener todos los libros", description = "Retorna una lista de todos los libros disponibles en la biblioteca")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de libros obtenida exitosamente",
@@ -55,6 +72,13 @@ public class BookController {
         return bookServices.getAll();
     }
 
+    /**
+     * Obtiene un libro específico por su ID.
+     * @param id ID del libro a buscar
+     * @return BookResponse con los datos del libro
+     * @throws 200 si el libro se encuentra
+     * @throws 404 si el libro no existe
+     */
     @Operation(summary = "Obtener libro por ID", description = "Retorna un libro específico basado en su ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Libro encontrado exitosamente"),
@@ -65,6 +89,15 @@ public class BookController {
         return bookServices.getById(id);
     }
 
+    /**
+     * Actualiza la información de un libro existente.
+     * @param id ID del libro a actualizar
+     * @param bookRequest Objeto con los nuevos datos del libro
+     * @return BookResponse con los datos actualizados
+     * @throws 200 si la actualización es exitosa
+     * @throws 404 si el libro no existe
+     * @throws 400 si los datos son inválidos
+     */
     @Operation(summary = "Actualizar libro", description = "Actualiza la información de un libro existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Libro actualizado exitosamente"),
@@ -78,6 +111,13 @@ public class BookController {
         return bookServices.updateById(id, bookRequest);
     }
 
+    /**
+     * Elimina un libro de la biblioteca.
+     * @param id ID del libro a eliminar
+     * @return BookResponse con los datos del libro eliminado
+     * @throws 200 si la eliminación es exitosa
+     * @throws 404 si el libro no existe
+     */
     @Operation(summary = "Eliminar libro", description = "Elimina un libro de la biblioteca")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Libro eliminado exitosamente"),
@@ -88,6 +128,12 @@ public class BookController {
         return bookServices.deleteById(id);
     }
 
+    /**
+     * Busca libros que coincidan con el texto en autor o título.
+     * @param text Texto a buscar
+     * @return Lista de BookResponse con los libros encontrados
+     * @throws 200 si la búsqueda es exitosa
+     */
     @Operation(summary = "Buscar libros por autor o título", description = "Busca libros que coincidan con el texto proporcionado en el autor o título")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
@@ -98,6 +144,11 @@ public class BookController {
         return bookServices.getByAuthorOrTitle(text);
     }
 
+    /**
+     * Obtiene todos los libros disponibles para préstamo.
+     * @return Lista de BookResponse con los libros disponibles
+     * @throws 200 si la operación es exitosa
+     */
     @Operation(summary = "Obtener libros disponibles", description = "Retorna una lista de todos los libros que están disponibles para préstamo")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de libros disponibles obtenida exitosamente")
@@ -107,6 +158,11 @@ public class BookController {
         return bookServices.getAvailableBooks();
     }
 
+    /**
+     * Obtiene todos los libros que están actualmente prestados.
+     * @return Lista de BookResponse con los libros prestados
+     * @throws 200 si la operación es exitosa
+     */
     @Operation(summary = "Obtener libros prestados", description = "Retorna una lista de todos los libros que están actualmente prestados")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de libros prestados obtenida exitosamente")
@@ -116,6 +172,12 @@ public class BookController {
         return bookServices.getLoanedBooks();
     }
 
+    /**
+     * Busca libros por género literario.
+     * @param gender Género a buscar
+     * @return Lista de BookResponse con los libros del género
+     * @throws 200 si la búsqueda es exitosa
+     */
     @Operation(summary = "Buscar libros por género", description = "Retorna una lista de libros filtrados por género")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de libros por género obtenida exitosamente")

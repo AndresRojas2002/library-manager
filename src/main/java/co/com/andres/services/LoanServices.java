@@ -19,5 +19,4 @@ public interface LoanServices {
     // devuelve el pretamo con el id del pretamo
     Loans returnLoan(Long loanId);
 
-    //
 }

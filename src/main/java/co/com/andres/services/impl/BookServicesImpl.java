@@ -15,25 +15,34 @@ import co.com.andres.repositories.BookRepository;
 import co.com.andres.services.BookServices;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Implementación del servicio de gestión de libros.
+ * Proporciona la lógica de negocio para todas las operaciones relacionadas con libros,
+ * incluyendo CRUD, búsquedas y gestión de préstamos.
+ */
 @Service
 @RequiredArgsConstructor
 public class BookServicesImpl implements BookServices {
 
     private final BookRepository bookRepository;
-
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    // crea un libro
+    /**
+     * Crea un nuevo libro en la biblioteca.
+     * @param bookRequest Datos del libro a crear
+     * @return BookResponse con los datos del libro creado
+     */
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
         var entity = toEntity(bookRequest);
-
         var newBook = bookRepository.save(entity);
-
         return toResponse(newBook);
     }
 
-    // odtine todos los libros
+    /**
+     * Obtiene todos los libros registrados.
+     * @return Lista de BookResponse con todos los libros
+     */
     @Override
     public List<BookResponse> getAll() {
         return bookRepository.findAll().stream()
@@ -41,16 +50,26 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    // odtine por id
+    /**
+     * Obtiene un libro específico por su ID.
+     * @param id ID del libro a buscar
+     * @return BookResponse con los datos del libro
+     * @throws BooksNotFoundException si el libro no existe
+     */
     @Override
     public BookResponse getById(long id) {
         return bookRepository.findById(id)
                 .map(this::toResponse)
                 .orElseThrow(() -> new BooksNotFoundException("NO SE PUDO ENCONTRAR EL LIBRO CON ESTE ID"));
-
     }
 
-    // actualiza por id
+    /**
+     * Actualiza la información de un libro existente.
+     * @param id ID del libro a actualizar
+     * @param bookRequest Nuevos datos del libro
+     * @return BookResponse con los datos actualizados
+     * @throws BooksNotFoundException si el libro no existe
+     */
     @Override
     public BookResponse updateById(long id, BookRequest bookRequest) {
         var entityOpcional = bookRepository.findById(id);
@@ -63,14 +82,17 @@ public class BookServicesImpl implements BookServices {
         entity.setState(entityOpcional.get().getState()); // No permitimos cambiar el estado aquí
 
         var updateEntity = bookRepository.save(entity);
-
         return toResponse(updateEntity);
     }
 
-    // elimina por id
+    /**
+     * Elimina un libro de la biblioteca.
+     * @param id ID del libro a eliminar
+     * @return BookResponse con los datos del libro eliminado
+     * @throws BooksNotFoundException si el libro no existe
+     */
     @Override
     public BookResponse deleteById(long id) {
-
         var optionalBook = bookRepository.findById(id);
         if (!optionalBook.isPresent()) {
             throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
@@ -80,7 +102,11 @@ public class BookServicesImpl implements BookServices {
         return toResponse(book);
     }
 
-    // odtine por autor o titulo
+    /**
+     * Busca libros por autor o título.
+     * @param text Texto a buscar
+     * @return Lista de BookResponse con los libros encontrados
+     */
     @Override
     public List<BookResponse> getByAuthorOrTitle(String text) {
         return bookRepository.findByAuthorContainingIgnoreCaseOrTitleContainingIgnoreCase(text, text)
@@ -89,7 +115,10 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    // odtine libros disponibles
+    /**
+     * Obtiene todos los libros disponibles para préstamo.
+     * @return Lista de BookResponse con los libros disponibles
+     */
     @Override
     public List<BookResponse> getAvailableBooks() {
         return bookRepository.findByState(StateBook.AVAILABLE).stream()
@@ -97,7 +126,10 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    // odtine libros prestados
+    /**
+     * Obtiene todos los libros que están prestados.
+     * @return Lista de BookResponse con los libros prestados
+     */
     @Override
     public List<BookResponse> getLoanedBooks() {
         return bookRepository.findByState(StateBook.LOANED).stream()
@@ -105,9 +137,11 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    
-
-    // listar por genero
+    /**
+     * Busca libros por género.
+     * @param gender Género a buscar
+     * @return Lista de BookResponse con los libros del género especificado
+     */
     @Override
     public List<BookResponse> getGenderByBook(String gender) {
         return bookRepository.findByGenderIgnoreCaseContaining(gender).stream()
@@ -115,7 +149,11 @@ public class BookServicesImpl implements BookServices {
                 .toList();
     }
 
-    // convierte un libro a una respuesta
+    /**
+     * Convierte una entidad Books a un DTO BookResponse.
+     * @param books Entidad a convertir
+     * @return BookResponse con los datos del libro
+     */
     private BookResponse toResponse(Books books) {
         var response = new BookResponse();
         response.setBookId(books.getBookId());
@@ -128,7 +166,11 @@ public class BookServicesImpl implements BookServices {
         return response;
     }
 
-    // convierte una peticion de libro a una entidad
+    /**
+     * Convierte un DTO BookRequest a una entidad Books.
+     * @param bookRequest DTO a convertir
+     * @return Books con los datos del libro
+     */
     private Books toEntity(BookRequest bookRequest) {
         var entity = new Books();
         entity.setTitle(bookRequest.getTitle());

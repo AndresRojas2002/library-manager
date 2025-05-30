@@ -42,8 +42,6 @@ public class Users {
    
     // Esta anotación @Enumerated indica que el campo state será almacenado como una cadena de texto en la base de datos   
     @Enumerated(EnumType.STRING)
-    // La anotación columnDefinition define la estructura completa de la columna en la base de datos
-    // En este caso, especifica que será un varchar(15) con valor por defecto 'WITHOUT_LOAN'
     @Column(nullable = false)
     private StateUser stateUser = StateUser.WITHOUT_LOAN;
 

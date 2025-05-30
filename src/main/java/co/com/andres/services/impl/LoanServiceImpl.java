@@ -23,6 +23,11 @@ import co.com.andres.services.LoanServices;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Implementación del servicio de gestión de préstamos.
+ * Proporciona la lógica de negocio para todas las operaciones relacionadas con préstamos,
+ * incluyendo creación, consulta y devolución de libros.
+ */
 @Service
 @RequiredArgsConstructor
 public class LoanServiceImpl implements LoanServices {
@@ -32,16 +37,24 @@ public class LoanServiceImpl implements LoanServices {
     private final BookRepository bookRepository;
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
 
+    /**
+     * Obtiene todos los préstamos registrados.
+     * @return Lista de LoanResponse con todos los préstamos
+     */
     @Override
-    // odtine todos los prestamos
     public List<LoanResponse> getAllLoan() {
         return loanRepository.findAll().stream()
                 .map(this::toResponse)
                 .toList();
     }
 
+    /**
+     * Elimina un préstamo específico.
+     * @param idLoan ID del préstamo a eliminar
+     * @return LoanResponse con los datos del préstamo eliminado
+     * @throws LoansNotFoundException si el préstamo no existe
+     */
     @Override
-    // borra un prestamo
     public LoanResponse deleteLoan(Long idLoan) {
         var opcionalLoan = loanRepository.findById(idLoan);
         if (!opcionalLoan.isPresent()) {
@@ -54,6 +67,14 @@ public class LoanServiceImpl implements LoanServices {
 
     }
 
+    /**
+     * Crea un nuevo préstamo asociando un usuario y un libro.
+     * @param userId ID del usuario que solicita el préstamo
+     * @param bookId ID del libro a prestar
+     * @return Loans con los datos del préstamo creado
+     * @throws UserNotFoundExeption si el usuario no existe o ya tiene un préstamo activo
+     * @throws BooksNotFoundException si el libro no existe o ya está prestado
+     */
     @Override
     @Transactional
     public Loans createLoanWithUserAndBook(Long userId, Long bookId) {
@@ -83,6 +104,12 @@ public class LoanServiceImpl implements LoanServices {
         return loanRepository.save(loan);
     }
 
+    /**
+     * Registra la devolución de un libro prestado.
+     * @param loanId ID del préstamo a devolver
+     * @return Loans con los datos del préstamo actualizado
+     * @throws LoansNotFoundException si el préstamo no existe o ya fue devuelto
+     */
     @Override
     @Transactional
     public Loans returnLoan(Long loanId) {
@@ -104,6 +131,11 @@ public class LoanServiceImpl implements LoanServices {
         return loanRepository.save(loan);
     }
 
+    /**
+     * Convierte una entidad Loans a un DTO LoanResponse.
+     * @param loans Entidad a convertir
+     * @return LoanResponse con los datos del préstamo
+     */
     private LoanResponse toResponse(Loans loans) {
         var response = new LoanResponse();
         response.setIdLoan(loans.getIdLoan());

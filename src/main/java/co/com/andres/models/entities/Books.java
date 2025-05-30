@@ -36,10 +36,7 @@ public class Books {
     @Column(nullable = false)
     private String gender;
 
-    // Esta anotación @Enumerated indica que el campo state será almacenado como una cadena de texto en la base de datos   
     @Enumerated(EnumType.STRING)
-    // La anotación columnDefinition define la estructura completa de la columna en la base de datos
-    // En este caso, especifica que será un varchar(10) con valor por defecto 'AVAILABLE'
     @Column(nullable = false)
     private StateBook state = StateBook.AVAILABLE;
 
