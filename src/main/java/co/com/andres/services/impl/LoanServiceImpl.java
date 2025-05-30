@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import co.com.andres.exceptions.BooksNotFoundException;
 import co.com.andres.exceptions.LoansNotFoundException;
 import co.com.andres.exceptions.UserNotFoundExeption;
-import co.com.andres.models.dto.LoanRequest;
 import co.com.andres.models.dto.LoanResponse;
 import co.com.andres.models.entities.Books;
 import co.com.andres.models.entities.Loans;
@@ -115,12 +114,4 @@ public class LoanServiceImpl implements LoanServices {
         return response;
     }
 
-    private Loans toEntity(LoanRequest loanRequest) {
-        var entity = new Loans();
-        entity.setIdBook(loanRequest.getIdBook());
-        entity.setIdUser(loanRequest.getIdUser());
-        entity.setLoanDate(LocalDate.now());
-        entity.setStateLoan(StateLoan.ACTIVE);
-        return entity;
-    }
 }

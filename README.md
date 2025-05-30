@@ -1,6 +1,6 @@
 # Sistema de Gestión de Biblioteca 📚
 
-Este es un sistema de gestión de biblioteca desarrollado en Java con Spring Boot que permite administrar libros, préstamos y devoluciones de manera eficiente.
+Este es un sistema de gestión de biblioteca desarrollado en Java con Spring Boot que permite administrar libros, usuarios, préstamos y devoluciones de manera eficiente.
 
 ## Autor 👨‍💻
 
@@ -10,9 +10,11 @@ Este es un sistema de gestión de biblioteca desarrollado en Java con Spring Boo
 ## Características Principales 🌟
 
 - Gestión completa de libros (CRUD)
+- Gestión de usuarios
 - Sistema de préstamos y devoluciones
 - Búsqueda avanzada por diferentes criterios
 - Control de estado de libros (disponible/prestado)
+- Control de estado de usuarios (con/sin préstamo)
 - API RESTful con documentación OpenAPI/Swagger
 - Validación de datos
 - Manejo de excepciones personalizado
@@ -22,7 +24,7 @@ Este es un sistema de gestión de biblioteca desarrollado en Java con Spring Boo
 - Java 17
 - Spring Boot 3.x
 - Spring Data JPA
-- MySQL/PostgreSQL (configurable)
+- PostgreSQL
 - Lombok
 - Maven
 - OpenAPI 3.0 (Swagger)
@@ -57,22 +59,33 @@ http://localhost:8080/swagger-ui.html
 | GET | `/api/libros/{id}` | Obtener libro por ID | 200: OK, 404: No encontrado |
 | PUT | `/api/libros/{id}` | Actualizar libro | 200: OK, 404: No encontrado, 400: Datos inválidos |
 | DELETE | `/api/libros/{id}` | Eliminar libro | 200: OK, 404: No encontrado |
+| GET | `/api/libros/textoBusqueda?q={texto}` | Buscar por autor o título | 200: OK |
+| GET | `/api/libros/genero?g={genero}` | Buscar por género | 200: OK |
+| GET | `/api/libros/disponibles` | Listar libros disponibles | 200: OK |
+| GET | `/api/libros/prestados` | Listar libros prestados | 200: OK |
 
-#### Búsquedas
+#### Gestión de Usuarios
 
 | Método | Endpoint | Descripción | Respuestas |
 |--------|----------|-------------|------------|
-| GET | `/api/libros/textoBusqueda?q={texto}` | Buscar por autor o título | 200: OK |
-| GET | `/api/libros/genero?g={genero}` | Buscar por género | 200: OK |
+| POST | `/api/usuarios` | Crear un nuevo usuario | 201: Creado, 400: Datos inválidos |
+| GET | `/api/usuarios` | Obtener todos los usuarios | 200: OK |
+| GET | `/api/usuarios/{id}` | Obtener usuario por ID | 200: OK, 404: No encontrado |
+| PUT | `/api/usuarios/{id}` | Actualizar usuario | 200: OK, 404: No encontrado, 400: Datos inválidos |
+| DELETE | `/api/usuarios/{id}` | Eliminar usuario | 200: OK, 404: No encontrado |
+| GET | `/api/usuarios/con-prestamo` | Obtener usuarios con préstamo activo | 200: OK |
+| GET | `/api/usuarios/sin-prestamo` | Obtener usuarios sin préstamo activo | 200: OK |
 
 #### Gestión de Préstamos
 
 | Método | Endpoint | Descripción | Respuestas |
 |--------|----------|-------------|------------|
-| GET | `/api/libros/disponibles` | Listar libros disponibles | 200: OK |
-| GET | `/api/libros/prestados` | Listar libros prestados | 200: OK |
-| PATCH | `/api/libros/{id}/prestar` | Prestar un libro | 200: OK, 404: No encontrado, 400: No disponible |
-| PATCH | `/api/libros/{id}/devolver` | Devolver un libro | 200: OK, 404: No encontrado, 400: No prestado |
+| GET | `/api/prestamos` | Obtener todos los préstamos | 200: OK |
+| POST | `/api/prestamos/create` | Crear nuevo préstamo | 200: OK, 404: No encontrado, 400: No disponible |
+| DELETE | `/api/prestamos/{id}` | Eliminar préstamo | 200: OK, 404: No encontrado |
+| PATCH | `/api/prestamos/devolver/{id}` | Devolver libro | 200: OK, 404: No encontrado, 400: No activo |
+
+
 
 ## Modelo de Datos 📊
 
@@ -85,35 +98,35 @@ http://localhost:8080/swagger-ui.html
 - Género (obligatorio)
 - Estado (AVAILABLE/LOANED)
 
-## Características de Búsqueda 🔍
+### Usuario (Users)
+- ID (autogenerado)
+- Nombre (obligatorio)
+- Apellido (obligatorio)
+- Email (obligatorio)
+- Teléfono
+- Dirección (obligatorio)
+- Fecha de registro (obligatorio)
+- Estado (WITHOUT_LOAN/WITH_LOAN)
 
-- Búsqueda por género ignorando mayúsculas/minúsculas
-- Búsqueda por autor o título con coincidencia parcial
-- Ignorancia de comillas en las búsquedas
-- Filtrado por estado del libro
+### Préstamo (Loans)
+- ID (autogenerado)
+- Usuario (relación ManyToOne)
+- Libro (relación ManyToOne)
+- Fecha de préstamo (obligatorio)
+- Estado (ACTIVE/NOT_ACTIVE)
 
-## Ejemplos de Uso 💡
+## Validaciones de Préstamos 🔒
 
-### Crear un libro
-```json
-POST /api/libros
-{
-    "title": "El Quijote",
-    "author": "Miguel de Cervantes",
-    "isbn": "978-3-16-148410-0",
-    "yearOfPublication": "1605-01-01",
-    "gender": "Novela"
-}
-```
-
-### Buscar por género
-```
-GET /api/libros/genero?g=ficción
-```
-La búsqueda es flexible y encontrará coincidencias incluso si:
-- Se usan comillas ("ficción" o 'ficción')
-- Se usan mayúsculas/minúsculas diferentes
-- Se busca una parte del género
+- Un libro solo puede ser prestado si está disponible (AVAILABLE)
+- Un usuario solo puede tener un préstamo activo a la vez
+- Al prestar un libro:
+  - El estado del libro cambia a LOANED
+  - El estado del usuario cambia a WITH_LOAN
+  - Se crea un préstamo con estado ACTIVE
+- Al devolver un libro:
+  - El estado del libro cambia a AVAILABLE
+  - El estado del usuario cambia a WITHOUT_LOAN
+  - El estado del préstamo cambia a NOT_ACTIVE
 
 ## Instalación y Configuración ⚙️
 
@@ -124,8 +137,8 @@ git clone [url-del-repositorio]
 
 2. Configurar la base de datos en `application.properties`
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/library
-spring.datasource.username=tu_usuario
+spring.datasource.url=jdbc:postgresql://localhost:5432/Library_Manager
+spring.datasource.username=postgres
 spring.datasource.password=tu_contraseña
 ```
 
