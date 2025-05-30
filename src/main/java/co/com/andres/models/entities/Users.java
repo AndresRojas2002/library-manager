@@ -44,7 +44,7 @@ public class Users {
     @Enumerated(EnumType.STRING)
     // La anotación columnDefinition define la estructura completa de la columna en la base de datos
     // En este caso, especifica que será un varchar(15) con valor por defecto 'WITHOUT_LOAN'
-    @Column(nullable = false, columnDefinition = "varchar(15) DEFAULT 'WITHOUT_LOAN'")
+    @Column(nullable = false)
     private StateUser stateUser = StateUser.WITHOUT_LOAN;
 
 }

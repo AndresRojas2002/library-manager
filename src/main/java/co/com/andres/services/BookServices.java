@@ -30,12 +30,6 @@ public interface BookServices {
     // Devuelve todos los libros que están prestados
     List<BookResponse> getLoanedBooks();
 
-    // Prestar un libro
-    BookResponse loanBook(Long Id);
-
-    // Devolver libro
-    BookResponse returnBook(Long Id);
-
-    // listar por genero 
+    // listar por genero
     List<BookResponse> getGenderByBook(String gender);
 }
