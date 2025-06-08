@@ -17,7 +17,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Implementación del servicio de gestión de usuarios.
- * Proporciona la lógica de negocio para todas las operaciones relacionadas con usuarios,
+ * Proporciona la lógica de negocio para todas las operaciones relacionadas con
+ * usuarios,
  * incluyendo registro, consulta y actualización de información.
  */
 @Service
@@ -28,6 +29,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Crea un nuevo usuario en el sistema.
+     * 
      * @param userRequest Datos del usuario a crear
      * @return UserResponse con los datos del usuario creado
      */
@@ -40,6 +42,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Obtiene todos los usuarios registrados.
+     * 
      * @return Lista de UserResponse con todos los usuarios
      */
     @Override
@@ -52,6 +55,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Obtiene un usuario específico por su ID.
+     * 
      * @param idUser ID del usuario a buscar
      * @return UserResponse con los datos del usuario
      * @throws UserNotFoundExeption si el usuario no existe
@@ -65,12 +69,13 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Elimina un usuario del sistema.
+     * 
      * @param idUser ID del usuario a eliminar
      * @return UserResponse con los datos del usuario eliminado
      * @throws UserNotFoundExeption si el usuario no existe
      */
     @Override
-    public UserResponse deleteUser(long idUser) {
+    public void deleteUser(long idUser) {
         var optionalUser = userRepository.findById(idUser);
         if (!optionalUser.isPresent()) {
             throw new UserNotFoundExeption("NO SE PUDO ENCONTRAR EL USUARIO POR ESE ID");
@@ -79,11 +84,12 @@ public class UserServicesImpl implements UserServices {
 
         var user = optionalUser.get();
         userRepository.delete(user);
-        return toResponse(user);
+        toResponse(user);
     }
 
     /**
      * Busca usuarios por nombre o apellido.
+     * 
      * @param text Texto a buscar
      * @return Lista de UserResponse con los usuarios encontrados
      */
@@ -97,7 +103,8 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Actualiza la información de un usuario existente.
-     * @param idUser ID del usuario a actualizar
+     * 
+     * @param idUser      ID del usuario a actualizar
      * @param userRequest Nuevos datos del usuario
      * @return UserResponse con los datos actualizados
      * @throws UserNotFoundExeption si el usuario no existe
@@ -121,6 +128,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Obtiene todos los usuarios que tienen préstamos activos.
+     * 
      * @return Lista de UserResponse con los usuarios que tienen préstamos
      */
     @Override
@@ -132,6 +140,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Obtiene todos los usuarios que no tienen préstamos activos.
+     * 
      * @return Lista de UserResponse con los usuarios sin préstamos
      */
     @Override
@@ -144,6 +153,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Convierte una entidad Users a un DTO UserResponse.
+     * 
      * @param user Entidad a convertir
      * @return UserResponse con los datos del usuario
      */
@@ -163,6 +173,7 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * Convierte un DTO UserRequest a una entidad Users.
+     * 
      * @param userRequest DTO a convertir
      * @return Users con los datos del usuario
      */

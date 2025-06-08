@@ -92,14 +92,14 @@ public class BookServicesImpl implements BookServices {
      * @throws BooksNotFoundException si el libro no existe
      */
     @Override
-    public BookResponse deleteById(long id) {
+    public void deleteById(long id) {
         var optionalBook = bookRepository.findById(id);
         if (!optionalBook.isPresent()) {
             throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
         }
         var book = optionalBook.get();
         bookRepository.delete(book);
-        return toResponse(book);
+         toResponse(book);
     }
 
     /**

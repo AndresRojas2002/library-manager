@@ -2,6 +2,7 @@ package co.com.andres.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.andres.models.dto.UserRequest;
@@ -52,6 +54,7 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = UserResponse.class))),
         @ApiResponse(responseCode = "400", description = "Datos del usuario inválidos")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public UserResponse createUser(@Valid @RequestBody UserRequest userRequest) {
         return userServices.createUser(userRequest);
@@ -67,6 +70,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "Lista de usuarios obtenida exitosamente",
             content = @Content(schema = @Schema(implementation = UserResponse.class)))
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<UserResponse> getAllUsers() {
         return userServices.getAllUser();
@@ -84,6 +88,7 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "Usuario encontrado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("{id}")
     public UserResponse getById(@Parameter(description = "ID del usuario") @PathVariable("id") Long id) {
         return userServices.getByIdUser(id);
@@ -104,6 +109,7 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
         @ApiResponse(responseCode = "400", description = "Datos del usuario inválidos")
     })
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("{id}")
     public UserResponse updateUser(
         @Parameter(description = "ID del usuario a actualizar") @Valid @Min(0) @PathVariable("id") long id,
@@ -120,12 +126,13 @@ public class UserController {
      */
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario de la biblioteca")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Usuario eliminado exitosamente"),
+        @ApiResponse(responseCode = "204", description = "Usuario eliminado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public UserResponse deleteUser(@Parameter(description = "ID del usuario a eliminar") @PathVariable("id") long id) {
-        return userServices.deleteUser(id);
+    public void deleteUser(@Parameter(description = "ID del usuario a eliminar") @PathVariable("id") long id) {
+        userServices.deleteUser(id);
     }
 
     /**
@@ -138,6 +145,7 @@ public class UserController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Búsqueda realizada exitosamente")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/buscar")
     public List<UserResponse> searchUsers(@Parameter(description = "Texto de búsqueda") @RequestParam ("u") String texto) {
         return userServices.getByNameOrLastName(texto);
@@ -152,6 +160,7 @@ public class UserController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/con-prestamos")
     public List<UserResponse> getUsersWithLoans() {
         return userServices.getWithLoanUser();
@@ -166,6 +175,7 @@ public class UserController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista obtenida exitosamente")
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/sin-prestamos")
     public List<UserResponse> getUsersWithoutLoans() {
         return userServices.getWithoutLoanUser();

@@ -17,7 +17,7 @@ public interface UserServices {
     UserResponse getByIdUser(long idUser);
 
     // borrar usuario por id
-    UserResponse deleteUser(long idUser);
+    void deleteUser(long idUser);
 
     // odtener usuarios por nombre o apellido
     List<UserResponse> getByNameOrLastName(String text);

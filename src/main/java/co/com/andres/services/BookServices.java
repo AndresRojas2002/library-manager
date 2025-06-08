@@ -19,7 +19,7 @@ public interface BookServices {
     BookResponse updateById(long id, BookRequest bookRequest);
 
     // borra libro
-    BookResponse deleteById(long id);
+    void deleteById(long id);
 
     // odtine libros por autor o titulo
     List<BookResponse> getByAuthorOrTitle(String text);
