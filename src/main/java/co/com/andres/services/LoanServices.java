@@ -11,7 +11,7 @@ public interface LoanServices {
     List<LoanResponse> getAllLoan();
 
     // borra pretamo por id
-    LoanResponse deleteLoan(Long idLoan);
+    void deleteLoan(Long idLoan);
 
     //crea un pretamo con el id de usuario y el id de libro
     Loans createLoanWithUserAndBook(Long userId, Long bookId);

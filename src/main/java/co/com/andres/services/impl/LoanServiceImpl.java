@@ -25,7 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Implementación del servicio de gestión de préstamos.
- * Proporciona la lógica de negocio para todas las operaciones relacionadas con préstamos,
+ * Proporciona la lógica de negocio para todas las operaciones relacionadas con
+ * préstamos,
  * incluyendo creación, consulta y devolución de libros.
  */
 @Service
@@ -39,6 +40,7 @@ public class LoanServiceImpl implements LoanServices {
 
     /**
      * Obtiene todos los préstamos registrados.
+     * 
      * @return Lista de LoanResponse con todos los préstamos
      */
     @Override
@@ -50,12 +52,13 @@ public class LoanServiceImpl implements LoanServices {
 
     /**
      * Elimina un préstamo específico.
+     * 
      * @param idLoan ID del préstamo a eliminar
      * @return LoanResponse con los datos del préstamo eliminado
      * @throws LoansNotFoundException si el préstamo no existe
      */
     @Override
-    public LoanResponse deleteLoan(Long idLoan) {
+    public void deleteLoan(Long idLoan) {
         var opcionalLoan = loanRepository.findById(idLoan);
         if (!opcionalLoan.isPresent()) {
             throw new LoansNotFoundException("EL PRESTAMO CON ESE ID NO EXISTE");
@@ -63,16 +66,18 @@ public class LoanServiceImpl implements LoanServices {
         }
         var loan = opcionalLoan.get();
         loanRepository.delete(loan);
-        return toResponse(loan);
+        toResponse(loan);
 
     }
 
     /**
      * Crea un nuevo préstamo asociando un usuario y un libro.
+     * 
      * @param userId ID del usuario que solicita el préstamo
      * @param bookId ID del libro a prestar
      * @return Loans con los datos del préstamo creado
-     * @throws UserNotFoundExeption si el usuario no existe o ya tiene un préstamo activo
+     * @throws UserNotFoundExeption   si el usuario no existe o ya tiene un préstamo
+     *                                activo
      * @throws BooksNotFoundException si el libro no existe o ya está prestado
      */
     @Override
@@ -106,6 +111,7 @@ public class LoanServiceImpl implements LoanServices {
 
     /**
      * Registra la devolución de un libro prestado.
+     * 
      * @param loanId ID del préstamo a devolver
      * @return Loans con los datos del préstamo actualizado
      * @throws LoansNotFoundException si el préstamo no existe o ya fue devuelto
@@ -133,6 +139,7 @@ public class LoanServiceImpl implements LoanServices {
 
     /**
      * Convierte una entidad Loans a un DTO LoanResponse.
+     * 
      * @param loans Entidad a convertir
      * @return LoanResponse con los datos del préstamo
      */

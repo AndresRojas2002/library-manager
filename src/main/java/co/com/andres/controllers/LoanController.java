@@ -2,6 +2,7 @@ package co.com.andres.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.andres.models.dto.LoanResponse;
@@ -47,6 +49,7 @@ public class LoanController {
         @ApiResponse(responseCode = "200", description = "Lista de préstamos obtenida exitosamente",
             content = @Content(schema = @Schema(implementation = LoanResponse.class)))
     })
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
     public List<LoanResponse> getAllLoan() {
         return loanServices.getAllLoan();
@@ -61,13 +64,14 @@ public class LoanController {
      */
     @Operation(summary = "Eliminar préstamo", description = "Elimina un préstamo de la biblioteca")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Préstamo eliminado exitosamente"),
+        @ApiResponse(responseCode = "204", description = "Préstamo eliminado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Préstamo no encontrado")
     })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public LoanResponse deleteLoan(
+    public void deleteLoan(
         @Parameter(description = "ID del préstamo a eliminar") @PathVariable("id") Long idLoan) {
-        return loanServices.deleteLoan(idLoan);
+         loanServices.deleteLoan(idLoan);
     }
 
     /**
@@ -87,6 +91,7 @@ public class LoanController {
         @ApiResponse(responseCode = "404", description = "Libro o usuario no encontrado"),
         @ApiResponse(responseCode = "400", description = "No se puede realizar el préstamo: libro no disponible o usuario con préstamo activo")
     })
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/create")
     public ResponseEntity<Loans> createLoan(
         @Parameter(description = "ID del usuario que solicita el préstamo") @RequestParam Long userId,
@@ -110,6 +115,7 @@ public class LoanController {
         @ApiResponse(responseCode = "404", description = "Préstamo no encontrado"),
         @ApiResponse(responseCode = "400", description = "El préstamo ya fue devuelto o no está activo")
     })
+    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/devolver/{id}")
     public ResponseEntity<Loans> returnLoan(
         @Parameter(description = "ID del préstamo a devolver") @PathVariable("id") Long loanId) {

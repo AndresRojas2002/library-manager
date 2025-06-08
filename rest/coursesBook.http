@@ -1,0 +1,44 @@
+### Crear un nuevo libro
+POST http://localhost:8080/api/libros
+Content-Type: application/json
+
+{
+  "title": "Cien años de soledad",
+  "author": "Gabriel Garcia",
+  "isbn": "978-84-376-0494-7",
+  "yearOfPublication": "1967-05-30",
+  "gender": "Novela"
+}
+
+### Obtener todos los libros
+GET http://localhost:8080/api/libros
+
+### Obtener libro por ID
+GET http://localhost:8080/api/libros/2
+
+### Actualizar libro por ID
+PUT http://localhost:8080/api/libros/1
+Content-Type: application/json
+
+{
+  "title": "Cien años de soledad",
+  "author": "Gabriel Garcia Marquez",
+  "isbn": "978-84-376-0494-7",
+  "yearOfPublication": "1967-05-30",
+  "gender": "Novela"
+}
+
+### Eliminar libro por ID
+DELETE http://localhost:8080/api/libros/4
+
+### Buscar libros por autor o título
+GET http://localhost:8080/api/libros/buscar?texto=Cervantes
+
+### Obtener libros disponibles
+GET http://localhost:8080/api/libros/disponibles
+
+### Obtener libros prestados
+GET http://localhost:8080/api/libros/prestados
+
+### Buscar libros por género
+GET http://localhost:8080/api/libros/genero?gender=Novela

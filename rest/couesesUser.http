@@ -1,0 +1,43 @@
+### Crear un nuevo usuario
+POST http://localhost:8080/api/usuarios
+Content-Type: application/json
+
+{
+  "name": "Luis Andres",
+  "lastName": "Rojas Acevedo",
+  "email": "luis.rojas@gmail.com",
+  "phone": "3001234567",
+  "dateRegistration": "2024-03-20",
+  "address": "Calle 123 #45-67, Medellin"
+}
+
+### Obtener todos los usuarios
+GET http://localhost:8080/api/usuarios
+
+### Obtener usuario por ID
+GET http://localhost:8080/api/usuarios/1
+
+### Actualizar usuario por ID
+PUT http://localhost:8080/api/usuarios/1
+Content-Type: application/json
+
+{
+  "name": "Luis Andres",
+  "lastName": "Rojas",
+  "email": "luis.rojas@gmail.com",
+  "phone": "3001234567",
+  "dateRegistration": "2024-03-20",
+  "address": "Calle 123 #45-67, Medellin"
+}
+
+### Eliminar usuario por ID
+DELETE http://localhost:8080/api/usuarios/1
+
+### Buscar usuarios por nombre o apellido
+GET http://localhost:8080/api/usuarios/buscar?u=Pérez
+
+### Obtener usuarios con préstamos
+GET http://localhost:8080/api/usuarios/con-prestamos
+
+### Obtener usuarios sin préstamos
+GET http://localhost:8080/api/usuarios/sin-prestamos

@@ -1,0 +1,11 @@
+### Obtener todos los préstamos
+GET http://localhost:8080/api/prestamos
+
+### Eliminar préstamo por ID
+DELETE http://localhost:8080/api/prestamos/1
+
+### Crear nuevo préstamo
+POST http://localhost:8080/api/prestamos/create?userId=1&bookId=1
+
+### Devolver libro prestado
+PATCH http://localhost:8080/api/prestamos/devolver/1
