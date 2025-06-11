@@ -1,16 +1,14 @@
 package co.com.andres.services.impl;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import co.com.andres.exceptions.UserNotFoundExeption;
+import co.com.andres.mapper.UserMapper;
 import co.com.andres.models.dto.UserRequest;
 import co.com.andres.models.dto.UserResponse;
 import co.com.andres.models.entities.StateUser;
-import co.com.andres.models.entities.Users;
 import co.com.andres.repositories.UserRepository;
 import co.com.andres.services.UserServices;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServicesImpl implements UserServices {
     private final UserRepository userRepository;
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+    private final UserMapper userMapper;
 
     /**
      * Crea un nuevo usuario en el sistema.
@@ -35,9 +33,9 @@ public class UserServicesImpl implements UserServices {
      */
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        var entity = toEntity(userRequest);
+        var entity = userMapper.toEntity(userRequest);
         var newUser = userRepository.save(entity);
-        return toResponse(newUser);
+        return userMapper.toResponse(newUser);
     }
 
     /**
@@ -49,7 +47,7 @@ public class UserServicesImpl implements UserServices {
     public List<UserResponse> getAllUser() {
 
         return userRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(userMapper::toResponse)
                 .toList();
     }
 
@@ -63,7 +61,7 @@ public class UserServicesImpl implements UserServices {
     @Override
     public UserResponse getByIdUser(long idUser) {
         return userRepository.findById(idUser)
-                .map(this::toResponse)
+                .map(userMapper::toResponse)
                 .orElseThrow(() -> new UserNotFoundExeption("NO SE PUDO ENCONTRAR EL USUARIO POR ESE ID"));
     }
 
@@ -84,7 +82,7 @@ public class UserServicesImpl implements UserServices {
 
         var user = optionalUser.get();
         userRepository.delete(user);
-        toResponse(user);
+        userMapper.toResponse(user);
     }
 
     /**
@@ -97,7 +95,7 @@ public class UserServicesImpl implements UserServices {
     public List<UserResponse> getByNameOrLastName(String text) {
         return userRepository.findByNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(text, text)
                 .stream()
-                .map(this::toResponse)
+                .map(userMapper::toResponse)
                 .toList();
     }
 
@@ -117,13 +115,13 @@ public class UserServicesImpl implements UserServices {
 
         }
 
-        var entity = toEntity(userRequest);
+        var entity = userMapper.toEntity(userRequest);
         entity.setIdUser(optionalUser.get().getIdUser());// Se mantiene el ID del usuario existente
         entity.setStateUser(optionalUser.get().getStateUser());// Se mantiene el estado actual del usuario
 
         var updateEntity = userRepository.save(entity);
 
-        return toResponse(updateEntity);
+        return userMapper.toResponse(updateEntity);
     }
 
     /**
@@ -134,7 +132,7 @@ public class UserServicesImpl implements UserServices {
     @Override
     public List<UserResponse> getWithLoanUser() {
         return userRepository.findByStateUser(StateUser.WITH_LOAN).stream()
-                .map(this::toResponse)
+                .map(userMapper::toResponse)
                 .toList();
     }
 
@@ -146,47 +144,11 @@ public class UserServicesImpl implements UserServices {
     @Override
     public List<UserResponse> getWithoutLoanUser() {
         return userRepository.findByStateUser(StateUser.WITHOUT_LOAN).stream()
-                .map(this::toResponse)
+                .map(userMapper::toResponse)
                 .toList();
 
     }
 
-    /**
-     * Convierte una entidad Users a un DTO UserResponse.
-     * 
-     * @param user Entidad a convertir
-     * @return UserResponse con los datos del usuario
-     */
-    private UserResponse toResponse(Users user) {
-        var response = new UserResponse();
-        response.setIdUser(user.getIdUser());
-        response.setName(user.getName());
-        response.setLastName(user.getLastName());
-        response.setEmail(user.getEmail());
-        response.setAddress(user.getAddress());
-        response.setPhone(user.getPhone());
-        response.setDateRegistration(user.getDateRegistration().format(formatter));
-        response.setStateUser(user.getStateUser().toString());
-        return response;
 
-    }
-
-    /**
-     * Convierte un DTO UserRequest a una entidad Users.
-     * 
-     * @param userRequest DTO a convertir
-     * @return Users con los datos del usuario
-     */
-    private Users toEntity(UserRequest userRequest) {
-        var user = new Users();
-        user.setName(userRequest.getName());
-        user.setLastName(userRequest.getLastName());
-        user.setEmail(userRequest.getEmail());
-        user.setAddress(userRequest.getAddress());
-        user.setPhone(userRequest.getPhone());
-        user.setDateRegistration(LocalDate.parse(userRequest.getDateRegistration(), formatter));
-        user.setStateUser(StateUser.WITHOUT_LOAN);
-        return user;
-    }
 
 }
