@@ -4,10 +4,10 @@ Content-Type: application/json
 
 {
   "name": "Luis Andres",
-  "lastName": "Rojas Acevedo",
+  "last_name": "Rojas Acevedo",
   "email": "luis.rojas@gmail.com",
   "phone": "3001234567",
-  "dateRegistration": "2024-03-20",
+  "date_registration": "2024-03-20",
   "address": "Calle 123 #45-67, Medellin"
 }
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 GET http://localhost:8080/api/usuarios
 
 ### Obtener usuario por ID
-GET http://localhost:8080/api/usuarios/1
+GET http://localhost:8080/api/usuarios/9
 
 ### Actualizar usuario por ID
 PUT http://localhost:8080/api/usuarios/1
@@ -23,10 +23,10 @@ Content-Type: application/json
 
 {
   "name": "Luis Andres",
-  "lastName": "Rojas",
+  "last_name": "Rojas",
   "email": "luis.rojas@gmail.com",
   "phone": "3001234567",
-  "dateRegistration": "2024-03-20",
+  "date_registration": "2024-03-20",
   "address": "Calle 123 #45-67, Medellin"
 }
 

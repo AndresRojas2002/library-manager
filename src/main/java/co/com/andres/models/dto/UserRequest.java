@@ -1,9 +1,10 @@
 package co.com.andres.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class UserRequest {
 
     @Schema(description = "Apellido del usuario", example = "Rojas Acevedo", required = false)
     @Size(min = 2, max = 50, message = "El apellido debe tener entre 2 y 50 caracteres")
+    @JsonProperty(value = "last_name")
     private String lastName;
 
     @Schema(description = "Correo electrónico del usuario", example = "usuario@ejemplo.com", required = true)
@@ -36,6 +38,7 @@ public class UserRequest {
     @Schema(description = "Fecha de registro del usuario en formato YYYY-MM-DD", example = "2024-03-20", required = true, pattern = "^\\d{4}-\\d{2}-\\d{2}$")
     @NotBlank(message = "La fecha de registro es obligatoria")
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "El formato de fecha debe ser YYYY-MM-DD")
+    @JsonProperty(value = "date_registration")
     private String dateRegistration;
 
     @Schema(description = "Dirección del usuario", example = "Calle 123 #45-67, Medellin", required = true)

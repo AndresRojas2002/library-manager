@@ -1,15 +1,14 @@
 package co.com.andres.services.impl;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import co.com.andres.exceptions.BookWinthIsbnExistExeption;
 import co.com.andres.exceptions.BooksNotFoundException;
+import co.com.andres.mapper.BookMapper;
 import co.com.andres.models.dto.BookRequest;
 import co.com.andres.models.dto.BookResponse;
-import co.com.andres.models.entities.Books;
 import co.com.andres.models.entities.StateBook;
 import co.com.andres.repositories.BookRepository;
 import co.com.andres.services.BookServices;
@@ -25,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class BookServicesImpl implements BookServices {
 
     private final BookRepository bookRepository;
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+    private final BookMapper bookMapper;
+    
+   
 
     /**
      * Crea un nuevo libro en la biblioteca.
@@ -34,9 +35,14 @@ public class BookServicesImpl implements BookServices {
      */
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
-        var entity = toEntity(bookRequest);
+
+        var book = bookRepository.findByIsbn(bookRequest.getIsbn());
+        if (book.isPresent()) {
+           throw new BookWinthIsbnExistExeption();
+        }
+        var entity = bookMapper.toEntity(bookRequest);
         var newBook = bookRepository.save(entity);
-        return toResponse(newBook);
+        return bookMapper.toResponse(newBook);
     }
 
     /**
@@ -46,7 +52,7 @@ public class BookServicesImpl implements BookServices {
     @Override
     public List<BookResponse> getAll() {
         return bookRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(bookMapper::toResponse)
                 .toList();
     }
 
@@ -59,8 +65,8 @@ public class BookServicesImpl implements BookServices {
     @Override
     public BookResponse getById(long id) {
         return bookRepository.findById(id)
-                .map(this::toResponse)
-                .orElseThrow(() -> new BooksNotFoundException("NO SE PUDO ENCONTRAR EL LIBRO CON ESTE ID"));
+                .map(bookMapper::toResponse)
+                .orElseThrow(() -> new BooksNotFoundException());
     }
 
     /**
@@ -74,15 +80,15 @@ public class BookServicesImpl implements BookServices {
     public BookResponse updateById(long id, BookRequest bookRequest) {
         var entityOpcional = bookRepository.findById(id);
         if (!entityOpcional.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
+            throw new BooksNotFoundException();
         }
 
-        var entity = toEntity(bookRequest);
+        var entity = bookMapper.toEntity(bookRequest);
         entity.setBookId(entityOpcional.get().getBookId());
         entity.setState(entityOpcional.get().getState()); // No permitimos cambiar el estado aquí
 
         var updateEntity = bookRepository.save(entity);
-        return toResponse(updateEntity);
+        return bookMapper.toResponse(updateEntity);
     }
 
     /**
@@ -95,11 +101,11 @@ public class BookServicesImpl implements BookServices {
     public void deleteById(long id) {
         var optionalBook = bookRepository.findById(id);
         if (!optionalBook.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
+            throw new BooksNotFoundException();
         }
         var book = optionalBook.get();
         bookRepository.delete(book);
-         toResponse(book);
+         bookMapper.toResponse(book);
     }
 
     /**
@@ -111,7 +117,7 @@ public class BookServicesImpl implements BookServices {
     public List<BookResponse> getByAuthorOrTitle(String text) {
         return bookRepository.findByAuthorContainingIgnoreCaseOrTitleContainingIgnoreCase(text, text)
                 .stream()
-                .map(this::toResponse)
+                .map(bookMapper::toResponse)
                 .toList();
     }
 
@@ -122,7 +128,7 @@ public class BookServicesImpl implements BookServices {
     @Override
     public List<BookResponse> getAvailableBooks() {
         return bookRepository.findByState(StateBook.AVAILABLE).stream()
-                .map(this::toResponse)
+                .map(bookMapper::toResponse)
                 .toList();
     }
 
@@ -133,7 +139,7 @@ public class BookServicesImpl implements BookServices {
     @Override
     public List<BookResponse> getLoanedBooks() {
         return bookRepository.findByState(StateBook.LOANED).stream()
-                .map(this::toResponse)
+                .map(bookMapper::toResponse)
                 .toList();
     }
 
@@ -145,40 +151,9 @@ public class BookServicesImpl implements BookServices {
     @Override
     public List<BookResponse> getGenderByBook(String gender) {
         return bookRepository.findByGenderIgnoreCaseContaining(gender).stream()
-                .map(this::toResponse)
+                .map(bookMapper::toResponse)
                 .toList();
     }
 
-    /**
-     * Convierte una entidad Books a un DTO BookResponse.
-     * @param books Entidad a convertir
-     * @return BookResponse con los datos del libro
-     */
-    private BookResponse toResponse(Books books) {
-        var response = new BookResponse();
-        response.setBookId(books.getBookId());
-        response.setAuthor(books.getAuthor());
-        response.setTitle(books.getTitle());
-        response.setIsbn(books.getIsbn());
-        response.setYearOfPublication(books.getYearOfPublication().format(formatter));
-        response.setGender(books.getGender());
-        response.setState(books.getState().toString());
-        return response;
-    }
-
-    /**
-     * Convierte un DTO BookRequest a una entidad Books.
-     * @param bookRequest DTO a convertir
-     * @return Books con los datos del libro
-     */
-    private Books toEntity(BookRequest bookRequest) {
-        var entity = new Books();
-        entity.setTitle(bookRequest.getTitle());
-        entity.setAuthor(bookRequest.getAuthor());
-        entity.setIsbn(bookRequest.getIsbn());
-        entity.setYearOfPublication(LocalDate.parse(bookRequest.getYearOfPublication(), formatter));
-        entity.setGender(bookRequest.getGender());
-        entity.setState(StateBook.AVAILABLE);
-        return entity;
-    }
+   
 }

@@ -1,14 +1,17 @@
 package co.com.andres.services.impl;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import co.com.andres.exceptions.BookAlreadyBorrowedExeption;
 import co.com.andres.exceptions.BooksNotFoundException;
 import co.com.andres.exceptions.LoansNotFoundException;
 import co.com.andres.exceptions.UserNotFoundExeption;
+import co.com.andres.exceptions.UserWinthLoanExeption;
+import co.com.andres.mapper.LoanMapper;
 import co.com.andres.models.dto.LoanResponse;
 import co.com.andres.models.entities.Books;
 import co.com.andres.models.entities.Loans;
@@ -36,7 +39,7 @@ public class LoanServiceImpl implements LoanServices {
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+    private final LoanMapper loanMapper;
 
     /**
      * Obtiene todos los préstamos registrados.
@@ -46,7 +49,7 @@ public class LoanServiceImpl implements LoanServices {
     @Override
     public List<LoanResponse> getAllLoan() {
         return loanRepository.findAll().stream()
-                .map(this::toResponse)
+                .map(loanMapper::toResponse)
                 .toList();
     }
 
@@ -61,12 +64,12 @@ public class LoanServiceImpl implements LoanServices {
     public void deleteLoan(Long idLoan) {
         var opcionalLoan = loanRepository.findById(idLoan);
         if (!opcionalLoan.isPresent()) {
-            throw new LoansNotFoundException("EL PRESTAMO CON ESE ID NO EXISTE");
+            throw new LoansNotFoundException();
 
         }
         var loan = opcionalLoan.get();
         loanRepository.delete(loan);
-        toResponse(loan);
+        loanMapper.toResponse(loan);
 
     }
 
@@ -85,16 +88,16 @@ public class LoanServiceImpl implements LoanServices {
     public Loans createLoanWithUserAndBook(Long userId, Long bookId) {
 
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundExeption("EL USUARIO CON ESE ID NO EXISTE"));
+                .orElseThrow(() -> new UserNotFoundExeption());
 
         Books book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new BooksNotFoundException("EL LIBRO CON ESE ID NO EXISTE"));
+                .orElseThrow(() -> new BooksNotFoundException());
 
         if (book.getState() != StateBook.AVAILABLE) {
-            throw new BooksNotFoundException("NO SE PUEDE PRESTAR EL LIBRO: YA SE ENCUENTRA PRESTADO");
+            throw new BookAlreadyBorrowedExeption();
         }
         if (user.getStateUser() != StateUser.WITHOUT_LOAN) {
-            throw new UserNotFoundExeption("NO SE PUEDE PRESTAR EL LIBRO: EL USUARIO YA TIENE UN LIBRO PRESTADO");
+            throw new UserWinthLoanExeption();
         }
 
         Loans loan = new Loans();
@@ -121,13 +124,13 @@ public class LoanServiceImpl implements LoanServices {
     public Loans returnLoan(Long loanId) {
 
         Loans loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new LoansNotFoundException("NO SE ENCONTRÓ UN PRÉSTAMO CON ESE ID"));
+                .orElseThrow(() -> new LoansNotFoundException());
 
         Users user = loan.getIdUser();
         Books book = loan.getIdBook();
 
         if (loan.getStateLoan() != StateLoan.ACTIVE) {
-            throw new LoansNotFoundException("EL PRÉSTAMO YA FUE DEVUELTO O NO ESTÁ ACTIVO");
+            throw new LoansNotFoundException();
         }
 
         loan.setStateLoan(StateLoan.NOT_ACTIVE);
@@ -135,22 +138,6 @@ public class LoanServiceImpl implements LoanServices {
         user.setStateUser(StateUser.WITHOUT_LOAN);
 
         return loanRepository.save(loan);
-    }
-
-    /**
-     * Convierte una entidad Loans a un DTO LoanResponse.
-     * 
-     * @param loans Entidad a convertir
-     * @return LoanResponse con los datos del préstamo
-     */
-    private LoanResponse toResponse(Loans loans) {
-        var response = new LoanResponse();
-        response.setIdLoan(loans.getIdLoan());
-        response.setIdUser(loans.getIdUser());
-        response.setIdBook(loans.getIdBook());
-        response.setLoanDate(loans.getLoanDate().format(formatter));
-        response.setStateLoan(loans.getStateLoan().toString());
-        return response;
     }
 
 }

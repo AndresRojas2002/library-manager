@@ -4,6 +4,7 @@ import co.com.andres.models.entities.Books;
 import co.com.andres.models.entities.Users;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
 @Data
 public class LoanResponse {
     @Schema(description = "Identificador único del préstamo", example = "1")

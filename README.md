@@ -85,8 +85,6 @@ http://localhost:8080/swagger-ui.html
 | DELETE | `/api/prestamos/{id}` | Eliminar préstamo | 200: OK, 404: No encontrado |
 | PATCH | `/api/prestamos/devolver/{id}` | Devolver libro | 200: OK, 404: No encontrado, 400: No activo |
 
-
-
 ## Modelo de Datos 📊
 
 ### Libro (Books)
@@ -127,6 +125,48 @@ http://localhost:8080/swagger-ui.html
   - El estado del libro cambia a AVAILABLE
   - El estado del usuario cambia a WITHOUT_LOAN
   - El estado del préstamo cambia a NOT_ACTIVE
+
+## Manejo de Excepciones 🔍
+
+El sistema implementa un manejo global de excepciones que proporciona respuestas estandarizadas para diferentes tipos de errores:
+
+### Tipos de Excepciones Manejadas
+
+- **Conflictos de Datos**
+  - ISBN duplicado
+  - Correo electrónico duplicado
+  - Libro ya prestado
+  - Usuario con préstamo activo
+
+- **Recursos No Encontrados**
+  - Libro no encontrado
+  - Usuario no encontrado
+  - Préstamo no encontrado
+
+- **Errores del Sistema**
+  - Errores de tiempo de ejecución
+  - Errores generales no manejados
+
+### Formato de Respuesta de Error
+
+```json
+{
+    "timestamp": "2024-03-21T10:30:00",
+    "status": 404,
+    "error": "Not Found",
+    "message": "Libro no encontrado con ID: 123",
+    "path": "/api/libros/123"
+}
+```
+
+### Códigos de Estado HTTP
+
+- 200: OK
+- 201: Creado
+- 400: Solicitud incorrecta
+- 404: Recurso no encontrado
+- 409: Conflicto
+- 500: Error interno del servidor
 
 ## Instalación y Configuración ⚙️
 
