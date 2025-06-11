@@ -5,7 +5,7 @@ GET http://localhost:8080/api/prestamos
 DELETE http://localhost:8080/api/prestamos/1
 
 ### Crear nuevo préstamo
-POST http://localhost:8080/api/prestamos/create?userId=1&bookId=1
+POST http://localhost:8080/api/prestamos/create?userId=1&bookId=5
 
 ### Devolver libro prestado
-PATCH http://localhost:8080/api/prestamos/devolver/3
+PATCH http://localhost:8080/api/prestamos/devolver/4
