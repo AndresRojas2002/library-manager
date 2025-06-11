@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import co.com.andres.exceptions.BookWinthIsbnExistExeption;
 import co.com.andres.exceptions.BooksNotFoundException;
 import co.com.andres.mapper.BookMapper;
 import co.com.andres.models.dto.BookRequest;
@@ -34,6 +35,11 @@ public class BookServicesImpl implements BookServices {
      */
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
+
+        var book = bookRepository.findByIsbn(bookRequest.getIsbn());
+        if (book.isPresent()) {
+           throw new BookWinthIsbnExistExeption();
+        }
         var entity = bookMapper.toEntity(bookRequest);
         var newBook = bookRepository.save(entity);
         return bookMapper.toResponse(newBook);
@@ -60,7 +66,7 @@ public class BookServicesImpl implements BookServices {
     public BookResponse getById(long id) {
         return bookRepository.findById(id)
                 .map(bookMapper::toResponse)
-                .orElseThrow(() -> new BooksNotFoundException("NO SE PUDO ENCONTRAR EL LIBRO CON ESTE ID"));
+                .orElseThrow(() -> new BooksNotFoundException());
     }
 
     /**
@@ -74,7 +80,7 @@ public class BookServicesImpl implements BookServices {
     public BookResponse updateById(long id, BookRequest bookRequest) {
         var entityOpcional = bookRepository.findById(id);
         if (!entityOpcional.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
+            throw new BooksNotFoundException();
         }
 
         var entity = bookMapper.toEntity(bookRequest);
@@ -95,7 +101,7 @@ public class BookServicesImpl implements BookServices {
     public void deleteById(long id) {
         var optionalBook = bookRepository.findById(id);
         if (!optionalBook.isPresent()) {
-            throw new BooksNotFoundException("NO SE ENCONTRO EL LIBRO CON ESE ID ");
+            throw new BooksNotFoundException();
         }
         var book = optionalBook.get();
         bookRepository.delete(book);

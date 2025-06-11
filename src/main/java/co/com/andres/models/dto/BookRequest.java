@@ -1,5 +1,7 @@
 package co.com.andres.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -45,6 +47,7 @@ public class BookRequest {
     )
     @NotBlank(message = "EL CAMPO 'YEAR OF PUBLICATION' NO PUEDE ESTAR VACÍO")
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "EL FORMATO DE FECHA DEBE SER YYYY-MM-DD")
+    @JsonProperty(value = "year_of_publication")
     private String yearOfPublication;
 
     @Schema(

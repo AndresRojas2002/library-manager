@@ -5,8 +5,8 @@ Content-Type: application/json
 {
   "title": "Cien años de soledad",
   "author": "Gabriel Garcia",
-  "isbn": "978-84-376-0494-7",
-  "yearOfPublication": "1967-05-30",
+  "isbn": "378-84-376-0494-7",
+  "year_of_publication": "1967-05-30",
   "gender": "Novela"
 }
 
@@ -23,13 +23,13 @@ Content-Type: application/json
 {
   "title": "Cien años de soledad",
   "author": "Gabriel Garcia Marquez",
-  "isbn": "978-84-376-0494-7",
-  "yearOfPublication": "1967-05-30",
+  "isbn": "978-84-376-0494-2",
+  "year_of_publication": "1967-05-30",
   "gender": "Novela"
 }
 
 ### Eliminar libro por ID
-DELETE http://localhost:8080/api/libros/4
+DELETE http://localhost:8080/api/libros/7
 
 ### Buscar libros por autor o título
 GET http://localhost:8080/api/libros/buscar?texto=Cervantes

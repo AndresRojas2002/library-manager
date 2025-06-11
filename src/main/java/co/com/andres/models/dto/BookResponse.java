@@ -1,7 +1,5 @@
 package co.com.andres.models.dto;
 
-
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import co.com.andres.exceptions.UserNotFoundExeption;
+import co.com.andres.exceptions.UserWinthGmailExeption;
 import co.com.andres.mapper.UserMapper;
 import co.com.andres.models.dto.UserRequest;
 import co.com.andres.models.dto.UserResponse;
@@ -33,6 +34,10 @@ public class UserServicesImpl implements UserServices {
      */
     @Override
     public UserResponse createUser(UserRequest userRequest) {
+        var user = userRepository.findByEmail(userRequest.getEmail());
+        if (user.isPresent()){
+            throw new UserWinthGmailExeption();
+        }
         var entity = userMapper.toEntity(userRequest);
         var newUser = userRepository.save(entity);
         return userMapper.toResponse(newUser);
@@ -62,7 +67,7 @@ public class UserServicesImpl implements UserServices {
     public UserResponse getByIdUser(long idUser) {
         return userRepository.findById(idUser)
                 .map(userMapper::toResponse)
-                .orElseThrow(() -> new UserNotFoundExeption("NO SE PUDO ENCONTRAR EL USUARIO POR ESE ID"));
+                .orElseThrow(() -> new UserNotFoundExeption());
     }
 
     /**
@@ -76,7 +81,7 @@ public class UserServicesImpl implements UserServices {
     public void deleteUser(long idUser) {
         var optionalUser = userRepository.findById(idUser);
         if (!optionalUser.isPresent()) {
-            throw new UserNotFoundExeption("NO SE PUDO ENCONTRAR EL USUARIO POR ESE ID");
+            throw new UserNotFoundExeption();
 
         }
 
@@ -111,7 +116,7 @@ public class UserServicesImpl implements UserServices {
     public UserResponse updateUser(Long idUser, UserRequest userRequest) {
         var optionalUser = userRepository.findById(idUser);
         if (!optionalUser.isPresent()) {
-            throw new UserNotFoundExeption("NO SE PUDO ENCONTRAR EL USUARIO POR ESE ID");
+            throw new UserNotFoundExeption();
 
         }
 

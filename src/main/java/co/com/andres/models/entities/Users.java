@@ -18,7 +18,6 @@ import lombok.Data;
 public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_user", unique = true)
     private Long idUser;
 
     @Column(nullable = false)
@@ -27,7 +26,7 @@ public class Users {
     @Column (nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column
