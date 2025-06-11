@@ -12,80 +12,99 @@ import co.com.andres.exceptions.LoansNotFoundException;
 import co.com.andres.exceptions.UserNotFoundExeption;
 import co.com.andres.exceptions.UserWinthGmailExeption;
 import co.com.andres.exceptions.UserWinthLoanExeption;
+import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExeptionHandler {
 
     /**
-     * Maneja la excepción cuando se intenta crear un libro con un ISBN que ya existe
+     * Maneja la excepción cuando se intenta crear un libro con un ISBN que ya
+     * existe
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerBookWinthIsbnExist(BookWinthIsbnExistExeption ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerBookWinthIsbnExist(BookWinthIsbnExistExeption ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
-     * Maneja las excepciones de tipo RuntimeException que no tienen un manejador específico
+     * Maneja las excepciones de tipo RuntimeException que no tienen un manejador
+     * específico
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerRuntimeExeption(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerRuntimeExeption(RuntimeException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
      * Maneja cualquier excepción general que no tenga un manejador específico
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerExeption(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerExeption(Exception ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
      * Maneja la excepción cuando se intenta prestar un libro que ya está prestado
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerBookAlreadyBorrowed(BookAlreadyBorrowedExeption ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerBookAlreadyBorrowed(BookAlreadyBorrowedExeption ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
-     * Maneja la excepción cuando un usuario intenta prestar un libro teniendo ya uno prestado
+     * Maneja la excepción cuando un usuario intenta prestar un libro teniendo ya
+     * uno prestado
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerUserWinthLoan(UserWinthLoanExeption ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerUserWinthLoan(UserWinthLoanExeption ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
-     * Maneja la excepción cuando se intenta registrar un usuario con un correo electrónico ya existente
+     * Maneja la excepción cuando se intenta registrar un usuario con un correo
+     * electrónico ya existente
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerUserWinthGmail(UserWinthGmailExeption ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerUserWinthGmail(UserWinthGmailExeption ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
      * Maneja la excepción cuando no se encuentra un libro
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerBooksNotFound(BooksNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerBooksNotFound(BooksNotFoundException ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
      * Maneja la excepción cuando no se encuentra un préstamo
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerLoansNotFound(LoansNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerLoansNotFound(LoansNotFoundException ex,
+            HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI()));
     }
 
     /**
      * Maneja la excepción cuando no se encuentra un usuario
      */
     @ExceptionHandler
-    public ResponseEntity<Void> handlerUserNotFound(UserNotFoundExeption ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<ApiErrorResponse> handlerUserNotFound(UserNotFoundExeption ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI()));
     }
 
 }
